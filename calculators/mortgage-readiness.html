@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mortgage Readiness Score | FinanceTools</title>
+  <meta name="description" content="UK-focused mortgage readiness score calculator: LTV, LTI, DTI, readiness band and actions." />
+
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="../index.html">FinanceTools</a>
+      <nav class="nav">
+        <a href="../index.html">Home</a>
+        <a aria-current="page" href="./mortgage-readiness.html">Mortgage Readiness</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="page-head">
+      <h3>Mortgage Readiness Score</h3>
+      <p class="muted">
+        UK-focused snapshot using common lender thresholds. No data is saved.
+      </p>
+    </section>
+
+  <!-- FTB gate -->
+    <section class="card" id="mr-ftbGate">
+  <h2>Before we start</h2>
+  <p class="muted">
+    This helps us tailor the calculator to your situation.
+  </p>
+
+  <div class="mode-switch" role="group">
+    <button type="button" class="btn btn-secondary" id="mr-ftbYes">
+      First-time buyer
+    </button>
+
+    <button type="button" class="btn btn-secondary" id="mr-ftbNo">
+      I have owned property before
+    </button>
+  </div>
+
+  <p class="hint muted">
+    First-time buyers may access mortgages with up to 5% deposit and stamp duty relief.
+  </p>
+</section>
+
+
+    <section class="card">
+  <h2>Choose your mode</h2>
+
+  <div class="mode-switch" role="group" aria-label="Calculator mode">
+    <button type="button" class="btn" id="mr-modeExpertBtn">Quick mode</button>
+    <button type="button" class="btn btn-secondary" id="mr-modeGuidedBtn">Guided mode</button>
+  </div>
+
+  <p class="muted" id="mr-modeHelp">
+    Quick mode is best if you know your numbers. Guided mode walks you through one question at a time.
+  </p>
+</section>
+
+
+
+    <section class="card" id="mr-expertSection">
+      <h2>Inputs</h2>
+
+      <form id="mr-form" class="form" novalidate disabled>
+        <fieldset class="fieldset">
+          <legend>Property & deposit</legend>
+
+          <div class="field-grid">
+            <label class="field">
+              <span>Property price (£)</span>
+              <input id="mr-propertyPrice" name="propertyPrice" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 250,000" required />
+            </label>
+
+            <label class="field">
+              <span>Deposit (£)</span>
+              <input id="mr-deposit" name="deposit" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 25,000" required />
+            </label>
+          </div>
+
+          <p class="hint muted">
+            Loan amount is calculated as <strong>property price − deposit</strong>.
+          </p>
+        </fieldset>
+
+        <fieldset class="fieldset">
+          <legend>Income & debts</legend>
+
+          <div class="field-grid">
+            <label class="field">
+              <span>Household gross income (annual, £)</span>
+              <input id="mr-incomeAnnual" name="incomeAnnual" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 60,000" required />
+            </label>
+
+            <label class="field">
+              <span>Monthly debt payments (£)</span>
+              <input id="mr-debtMonthly" name="debtMonthly" type="number" inputmode="numeric" min="0" step="10" placeholder="e.g. 350" />
+            </label>
+            <label class="field">
+  <span>Monthly rent (£)</span>
+  <input id="mr-rentMonthly" name="rentMonthly" type="number" inputmode="numeric" min="0" step="10" placeholder="e.g. 900" />
+</label>
+
+<label class="field">
+  <span>Council tax (monthly, £)</span>
+  <input id="mr-councilTaxMonthly" name="councilTaxMonthly" type="number" inputmode="numeric" min="0" step="5" placeholder="e.g. 160" />
+</label>
+
+<label class="field">
+  <span>Utilities (monthly, £)</span>
+  <input id="mr-utilitiesMonthly" name="utilitiesMonthly" type="number" inputmode="numeric" min="0" step="5" value="250" />
+</label>
+          </div>
+     <div class="actions">
+          <button id="mr-calcBtn" class="btn" type="submit">Calculate</button>
+          <button id="mr-resetBtn" class="btn btn-secondary" type="button">Reset</button>
+        </div>
+
+        <p id="mr-error" class="error" role="alert" aria-live="polite"></p>
+      </form>
+    </section>
+
+    
+
+<section class="card" id="mr-guidedSection" hidden>
+  <h2>Guided mode</h2>
+
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="mr-progressText">Question 1 of 3</span>
+      <span class="muted" id="mr-timeRemaining">~1 min remaining</span>
+    </div>
+
+    <div class="progress-bar" aria-label="Progress">
+      <div class="progress-fill" id="mr-progressFill" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <div class="guided-step">
+    <label class="field">
+      <span id="mr-guidedPrompt">Property price (£)</span>
+      <input id="mr-guidedInput" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 250,000" />
+    </label>
+
+    <p class="hint muted" id="mr-guidedHint">This is the purchase price of the property.</p>
+    <p class="error" id="mr-guidedError" role="alert" aria-live="polite"></p>
+
+    <div class="actions">
+      <button type="button" class="btn btn-secondary" id="mr-prevBtn">Back</button>
+      <button type="button" class="btn" id="mr-nextBtn">Next</button>
+      <button type="button" class="btn" id="mr-finishBtn" hidden>Finish & calculate</button>
+    </div>
+  </div>
+</section>
+
+<section class="card" aria-live="polite">
+  <div class="results-head">
+    <h2>Results</h2>
+    <div id="mr-bandBadge" class="badge badge-neutral" title="Readiness band">
+      Not calculated
+    </div>
+  </div>
+
+  <div class="metric">
+    <div class="metric-label">Disposable income (monthly)</div>
+    <div class="metric-value"><span id="mr-disposableMonthly">—</span></div>
+    <div class="metric-note muted" id="mr-bufferNote">—</div>
+  </div>
+
+  <div class="results-grid">
+    <div class="metric">
+      <div class="metric-label">Loan amount</div>
+      <div class="metric-value"><span id="mr-loanAmount">—</span></div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-label">Loan-to-Value (LTV)</div>
+      <div class="metric-value"><span id="mr-ltv">—</span></div>
+      <div class="metric-note muted" id="mr-ltvNote">—</div>
+      <div class="metric-note muted" id="mr-depositInsight"></div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-label">Loan-to-Income (LTI)</div>
+      <div class="metric-value"><span id="mr-lti">—</span></div>
+      <div class="metric-note muted" id="mr-ltiNote">—</div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-label">Debt-to-Income (DTI)</div>
+      <div class="metric-value"><span id="mr-dti">—</span></div>
+      <div class="metric-note muted" id="mr-dtiNote">—</div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <section class="recommendations">
+    <h3>What to do next</h3>
+    <ul id="mr-suggestions" class="list">
+      <li class="muted">Enter your numbers and calculate to see tailored actions.</li>
+    </ul>
+
+    <p class="disclaimer muted">
+      This is a guidance tool, not mortgage advice. Lenders use more detail (credit file, dependants, commitments, stress tests, product rules).
+    </p>
+  </section>
+</section>
+
+<section class="card" id="mr-emailHook">
+  <h3>Get mortgage-ready faster</h3>
+
+  <p class="muted">
+    I’ll send you simple steps to improve your approval chances and avoid common mistakes.
+  </p>
+
+  <input type="text" id="mr-name" placeholder="Your name" class="input" />
+  <input type="email" id="mr-email" placeholder="Enter your email" class="input" />
+
+  <button class="btn" id="mr-emailBtn">
+    Help me become prepared
+  </button>
+
+  <p class="muted small">
+    No spam. Just useful insights.
+  </p>
+</section>
+
+    <!-- results -->
+    <section class="card" aria-live="polite">
+      <div class="results-head">
+        <h2>Results</h2>
+        <div id="mr-bandBadge" class="badge badge-neutral" title="Readiness band">
+          Not calculated
+        </div>
+      </div>
+    
+      <div class="metric">
+  <div class="metric-label">Disposable income (monthly)</div>
+  <div class="metric-value"><span id="mr-disposableMonthly">—</span></div>
+  <div class="metric-note muted" id="mr-bufferNote">—</div>
+</div>
+
+      <div class="results-grid">
+        <div class="metric">
+          <div class="metric-label">Loan amount</div>
+          <div class="metric-value"><span id="mr-loanAmount">—</span></div>
+        </div>
+
+       <div class="metric">
+  <div class="metric-label">Loan-to-Value (LTV)</div>
+  <div class="metric-value"><span id="mr-ltv">—</span></div>
+  <div class="metric-note muted" id="mr-ltvNote">—</div>
+  <div class="metric-note muted" id="mr-depositInsight"></div>
+</div>
+
+        <div class="metric">
+          <div class="metric-label">Loan-to-Income (LTI)</div>
+          <div class="metric-value"><span id="mr-lti">—</span></div>
+          <div class="metric-note muted" id="mr-ltiNote">—</div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-label">Debt-to-Income (DTI)</div>
+          <div class="metric-value"><span id="mr-dti">—</span></div>
+          <div class="metric-note muted" id="mr-dtiNote">—</div>
+        </div>
+      </div>
+
+            <hr class="divider" />
+
+  </div>
+ </section>
+
+
+<!--email hook-->
+<section class="card" id="mr-emailHook">
+  <h3>Get mortgage-ready faster</h3>
+
+  <p class="muted">
+    I’ll send you simple steps to improve your approval chances and avoid common mistakes.
+  </p>
+
+  <input type="text" id="mr-name" placeholder="Your name" class="input" />
+  <input type="email" id="mr-email" placeholder="Enter your email" class="input" />
+
+  <button class="btn" id="mr-emailBtn">
+    Help me become prepared
+  </button>
+
+  <p class="muted small">
+    No spam. Just useful insights.
+  </p>
+</section>
+
+ 
+  <footer class="site-footer">
+    <div class="container muted">
+      <small>FinanceTools, built locally. No tracking. No storage.</small>
+    </div>
+  </footer>
+
+<script src="../assets/js/tax-utils.js"></script>
+<script src="../assets/js/mortgage-calculations.js"></script>
+<script src="../assets/js/mortgage-readiness.js"></script>
+</body>
+</html>
